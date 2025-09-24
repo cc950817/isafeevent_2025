@@ -21,12 +21,6 @@ pip install selenium webdriver-manager google-generativeai
 ### OpenAI 版本
 
 ```bash
-pip install -r requirements_openai.txt
-```
-
-或手動安裝：
-
-```bash
 pip install selenium webdriver-manager openai
 ```
 
