@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from openai import OpenAI
 import time
 
-# OpenAI 版本的自動答題腳本，使用 GPT-4o-mini 模型
+# OpenAI 版本的自動答題腳本，使用 gpt-4o-mini 模型
 
 def click_element(driver, xpath):
     """點擊元素的通用函數"""
@@ -49,9 +49,9 @@ def answer_multiple_choice_question(driver, question, options, question_number, 
     try:
         prompt = f"這是一個數位素養測驗題目，請選擇正確答案：\n問題: {question}\n選項: {', '.join(options)}\n只返回正確選項的內容，不要其他說明。"
         
-        # 使用 OpenAI GPT-5-nano 生成答案
+        # 使用 OpenAI gpt-4o-mini 生成答案
         response = client.chat.completions.create(
-            model="gpt-5-nano",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "你是一個數位素養專家，請根據題目選擇最正確的答案。只返回選項內容，不要其他解釋。"},
                 {"role": "user", "content": prompt}
@@ -135,7 +135,7 @@ def complete_quiz(driver, client):
     
     # 第二頁：處理選擇題（1-16題）
     print("\n" + "="*50)
-    print("🤖 開始處理第二頁（選擇題）- 使用 GPT-4o-mini...")
+    print("🤖 開始處理第二頁（選擇題）- 使用 gpt-4o-mini...")
     print("="*50)
     
     for i in range(1, 17):
@@ -165,10 +165,10 @@ def complete_quiz(driver, client):
 
 def main():
     # 初始化
-    print("🤖 2025年數位素養自動答題腳本 (OpenAI GPT-4o-mini 版本)")
+    print("🤖 2025年數位素養自動答題腳本 (OpenAI gpt-4o-mini 版本)")
     print("📋 本腳本支援兩頁測驗格式：")
     print("   - 第一頁：16題李克特量表（統一選擇「普通」）")
-    print("   - 第二頁：16題選擇題（使用 GPT-4o-mini 智能答題）")
+    print("   - 第二頁：16題選擇題（使用 gpt-4o-mini 智能答題）")
     print("-" * 60)
     
     # 初始化瀏覽器
