@@ -26,20 +26,6 @@ pip install selenium webdriver-manager openai
 
 ## 使用方法
 
-### Gemini 版本
-
-```bash
-python bot_gemini.py
-```
-
-### OpenAI 版本
-
-```bash
-python bot_openai.py
-```
-
-### 共同步驟
-
 1. 等待瀏覽器開啟並手動登入網站
 2. 登入完成後按 Enter 繼續
 3. 輸入對應的 API 金鑰：
