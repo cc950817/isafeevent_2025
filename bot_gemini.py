@@ -90,12 +90,16 @@ def complete_quiz(driver):
     
     # 點擊開始按鈕
     if not click_element(driver, "//button[contains(@class, 'btnStartExam')]"):
+        print("❌ 無法找到開始按鈕")
         return False
     
     time.sleep(2)
     
     # 第一頁：處理李克特量表題目（1-16題）
-    print("開始處理第一頁（李克特量表）...")
+    print("\n" + "="*50)
+    print("📝 開始處理第一頁（李克特量表）...")
+    print("="*50)
+    
     for i in range(1, 17):
         try:
             div = driver.find_element(By.ID, f'div_q_{i}')
@@ -105,18 +109,21 @@ def complete_quiz(driver):
             answer_likert_question(driver, question, i)
             time.sleep(0.5)  # 短暫延遲避免過快操作
         except Exception as e:
-            print(f"處理第一頁第 {i} 題時出錯: {e}")
+            print(f"❌ 處理第一頁第 {i} 題時出錯: {e}")
     
     # 提交第一頁答案
-    print("提交第一頁答案...")
+    print("\n📤 提交第一頁答案...")
     if not click_element(driver, "//button[contains(@class, 'btnSendExam')]"):
-        print("無法點擊第一頁送出按鈕")
+        print("❌ 無法點擊第一頁送出按鈕")
         return False
     
     time.sleep(3)  # 等待頁面跳轉
     
     # 第二頁：處理選擇題（1-16題）
-    print("開始處理第二頁（選擇題）...")
+    print("\n" + "="*50)
+    print("🤖 開始處理第二頁（選擇題）- 使用 Gemini 2.5 Flash Lite...")
+    print("="*50)
+    
     for i in range(1, 17):
         try:
             div = driver.find_element(By.ID, f'div_q_{i}')
@@ -129,14 +136,14 @@ def complete_quiz(driver):
             options = [opt.text.strip() for opt in option_labels if opt.text.strip()]
             
             answer_multiple_choice_question(driver, question, options, i)
-            time.sleep(0.5)  # 短暫延遲避免過快操作
+            time.sleep(0.8)  # 稍微延長延遲避免 API 限制
         except Exception as e:
-            print(f"處理第二頁第 {i} 題時出錯: {e}")
+            print(f"❌ 處理第二頁第 {i} 題時出錯: {e}")
     
     # 提交第二頁答案（完成測驗）
-    print("提交第二頁答案，完成測驗...")
+    print("\n🎯 提交第二頁答案，完成測驗...")
     if not click_element(driver, "//button[contains(@class, 'btnSendExam')]"):
-        print("無法點擊第二頁送出按鈕")
+        print("❌ 無法點擊第二頁送出按鈕")
         return False
     
     time.sleep(2)
@@ -144,15 +151,20 @@ def complete_quiz(driver):
 
 def main():
     # 初始化
-    print("2025年數位素養自動答題腳本")
-    print("本腳本支援兩頁測驗格式：")
-    print("- 第一頁：16題李克特量表（自我評量）")
-    print("- 第二頁：16題選擇題（情境題目）")
-    print("-" * 50)
+    print("🤖 2025年數位素養自動答題腳本 (Gemini 版本)")
+    print("📋 本腳本支援兩頁測驗格式：")
+    print("   - 第一頁：16題李克特量表（統一選擇「普通」）")
+    print("   - 第二頁：16題選擇題（使用 Gemini 2.5 Flash Lite 智能答題）")
+    print("-" * 60)
+    
+    # 初始化瀏覽器
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("user-data-dir=C:/temp/chrome-profile")
+    # chrome_options.add_argument("--headless")  # 如需無頭模式可取消註解
     
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
-        options=webdriver.ChromeOptions().add_argument("user-data-dir=C:/temp/chrome-profile")
+        options=chrome_options
     )
     driver.get("https://isafeevent.moe.edu.tw/")
     
@@ -165,26 +177,31 @@ def main():
     delay = int(input("輸入每次答題完成後的等待秒數: "))
     
     # 主循環
+    success_count = 0
     for i in range(attempts):
         try:
-            print(f"\n{'='*60}")
-            print(f"開始第 {i + 1} 次答題（共 {attempts} 次）...")
-            print(f"{'='*60}")
+            print(f"\n{'🎯'*20}")
+            print(f"🚀 開始第 {i + 1} 次答題（共 {attempts} 次）...")
+            print(f"{'🎯'*20}")
+            
             if complete_quiz(driver):
-                print(f"✓ 第 {i + 1} 次答題完成！")
+                success_count += 1
+                print(f"✅ 第 {i + 1} 次答題完成！成功率: {success_count}/{i+1}")
             else:
-                print(f"✗ 第 {i + 1} 次答題失敗")
+                print(f"❌ 第 {i + 1} 次答題失敗")
             
             if i < attempts - 1:  # 不是最後一次才等待
-                print(f"等待 {delay} 秒後開始下一次答題...")
+                print(f"⏸ 等待 {delay} 秒後開始下一次答題...")
                 time.sleep(delay)
         except Exception as e:
-            print(f"錯誤: {e}")
-            print("等待 30 秒後重試...")
+            print(f"💥 錯誤: {e}")
+            print("⏸ 等待 30 秒後重試...")
             time.sleep(30)
     
-    print(f"\n所有答題完成！總共完成 {attempts} 次答題。")
-    print("按下 Enter 鍵關閉瀏覽器...")
+    print(f"\n🎊 所有答題完成！")
+    print(f"📊 總共完成 {success_count}/{attempts} 次答題")
+    print(f"📈 成功率: {(success_count/attempts)*100:.1f}%")
+    print("\n按下 Enter 鍵關閉瀏覽器...")
     input()
     driver.quit()
 
