@@ -74,7 +74,7 @@ def answer_multiple_choice_question(driver, question, options, question_number, 
             if clean_answer in clean_option or clean_option in clean_answer:
                 radio_id = f"q_{question_number}_{i}"
                 if click_element(driver, f"//input[@id='{radio_id}']"):
-                    print(f"✓ 成功選擇: {option}")
+                    print(f"成功選擇: {option}")
                     return
                     
             # 也嘗試部分關鍵字匹配
@@ -84,19 +84,19 @@ def answer_multiple_choice_question(driver, question, options, question_number, 
                 if any(keyword in option for keyword in main_keywords):
                     radio_id = f"q_{question_number}_{i}"
                     if click_element(driver, f"//input[@id='{radio_id}']"):
-                        print(f"✓ 關鍵字匹配成功選擇: {option}")
+                        print(f"關鍵字匹配成功選擇: {option}")
                         return
         
         # 如果找不到匹配的答案，隨機選擇
         random_choice = random.randint(1, len(options))
         click_element(driver, f"//input[@id='q_{question_number}_{random_choice}']")
-        print(f"⚠ 使用隨機答案: {options[random_choice-1]}")
+        print(f"使用隨機答案: {options[random_choice-1]}")
         
     except Exception as e:
         print(f"處理問題時出錯: {e}，使用隨機答案")
         random_choice = random.randint(1, len(options))
         click_element(driver, f"//input[@id='q_{question_number}_{random_choice}']")
-        print(f"⚠ 錯誤後使用隨機答案: {options[random_choice-1]}")
+        print(f"錯誤後使用隨機答案: {options[random_choice-1]}")
 
 def complete_quiz(driver, client):
     """完成一次測驗（處理兩頁測驗）"""
@@ -104,14 +104,14 @@ def complete_quiz(driver, client):
     
     # 點擊開始按鈕
     if not click_element(driver, "//button[contains(@class, 'btnStartExam')]"):
-        print("❌ 無法找到開始按鈕")
+        print("無法找到開始按鈕")
         return False
     
     time.sleep(2)
     
     # 第一頁：處理李克特量表題目（1-16題）
     print("\n" + "="*50)
-    print("📝 開始處理第一頁（李克特量表）...")
+    print("開始處理第一頁（李克特量表）...")
     print("="*50)
     
     for i in range(1, 17):
@@ -123,19 +123,19 @@ def complete_quiz(driver, client):
             answer_likert_question(driver, question, i)
             time.sleep(0.5)  # 短暫延遲避免過快操作
         except Exception as e:
-            print(f"❌ 處理第一頁第 {i} 題時出錯: {e}")
+            print(f"處理第一頁第 {i} 題時出錯: {e}")
     
     # 提交第一頁答案
-    print("\n📤 提交第一頁答案...")
+    print("\n提交第一頁答案...")
     if not click_element(driver, "//button[contains(@class, 'btnSendExam')]"):
-        print("❌ 無法點擊第一頁送出按鈕")
+        print("無法點擊第一頁送出按鈕")
         return False
     
     time.sleep(3)  # 等待頁面跳轉
     
     # 第二頁：處理選擇題（1-16題）
     print("\n" + "="*50)
-    print("🤖 開始處理第二頁（選擇題）- 使用 gpt-4o-mini...")
+    print("開始處理第二頁（選擇題）- 使用 gpt-4o-mini...")
     print("="*50)
     
     for i in range(1, 17):
@@ -152,24 +152,18 @@ def complete_quiz(driver, client):
             answer_multiple_choice_question(driver, question, options, i, client)
             time.sleep(0.8)  # 稍微延長延遲避免 API 限制
         except Exception as e:
-            print(f"❌ 處理第二頁第 {i} 題時出錯: {e}")
+            print(f"處理第二頁第 {i} 題時出錯: {e}")
     
     # 提交第二頁答案（完成測驗）
-    print("\n🎯 提交第二頁答案，完成測驗...")
+    print("\n提交第二頁答案，完成測驗...")
     if not click_element(driver, "//button[contains(@class, 'btnSendExam')]"):
-        print("❌ 無法點擊第二頁送出按鈕")
+        print("無法點擊第二頁送出按鈕")
         return False
     
     time.sleep(2)
     return True
 
 def main():
-    # 初始化
-    print("🤖 2025年數位素養自動答題腳本 (OpenAI gpt-4o-mini 版本)")
-    print("📋 本腳本支援兩頁測驗格式：")
-    print("   - 第一頁：16題李克特量表（統一選擇「普通」）")
-    print("   - 第二頁：16題選擇題（使用 gpt-4o-mini 智能答題）")
-    print("-" * 60)
     
     # 初始化瀏覽器
     chrome_options = webdriver.ChromeOptions()
@@ -183,11 +177,11 @@ def main():
     driver.get("https://isafeevent.moe.edu.tw/")
     
     # 設定
-    print("🔐 請在瀏覽器中完成登入操作，完成後按下 Enter 鍵繼續...")
+    print("請在瀏覽器中完成登入操作，完成後按下 Enter 鍵繼續...")
     input()
     
     # 設定 OpenAI API
-    api_key = input("🔑 輸入 OpenAI API 金鑰: ")
+    api_key = input("輸入 OpenAI API 金鑰: ")
     client = OpenAI(api_key=api_key)
     
     # 測試 API 連接
@@ -197,41 +191,41 @@ def main():
             messages=[{"role": "user", "content": "test"}],
             max_tokens=5
         )
-        print("✅ OpenAI API 連接成功！")
+        print("OpenAI API 連接成功！")
     except Exception as e:
-        print(f"❌ OpenAI API 連接失敗: {e}")
+        print(f"OpenAI API 連接失敗: {e}")
         print("請檢查 API 金鑰是否正確")
         input("按 Enter 鍵退出...")
         return
     
-    attempts = int(input("📊 輸入要重複答題的次數: "))
-    delay = int(input("⏰ 輸入每次答題完成後的等待秒數: "))
+    attempts = int(input("輸入要重複答題的次數: "))
+    delay = int(input("輸入每次答題完成後的等待秒數: "))
     
     # 主循環
     success_count = 0
     for i in range(attempts):
         try:
-            print(f"\n{'🎯'*20}")
-            print(f"🚀 開始第 {i + 1} 次答題（共 {attempts} 次）...")
-            print(f"{'🎯'*20}")
+            print(f"\n{'='*50}")
+            print(f"開始第 {i + 1} 次答題（共 {attempts} 次）...")
+            print(f"{'='*50}")
             
             if complete_quiz(driver, client):
                 success_count += 1
-                print(f"✅ 第 {i + 1} 次答題完成！成功率: {success_count}/{i+1}")
+                print(f"第 {i + 1} 次答題完成！成功率: {success_count}/{i+1}")
             else:
-                print(f"❌ 第 {i + 1} 次答題失敗")
+                print(f"第 {i + 1} 次答題失敗")
             
             if i < attempts - 1:  # 不是最後一次才等待
-                print(f"⏸ 等待 {delay} 秒後開始下一次答題...")
+                print(f"等待 {delay} 秒後開始下一次答題...")
                 time.sleep(delay)
         except Exception as e:
-            print(f"💥 錯誤: {e}")
-            print("⏸ 等待 30 秒後重試...")
+            print(f"錯誤: {e}")
+            print("等待 30 秒後重試...")
             time.sleep(30)
     
-    print(f"\n🎊 所有答題完成！")
-    print(f"📊 總共完成 {success_count}/{attempts} 次答題")
-    print(f"📈 成功率: {(success_count/attempts)*100:.1f}%")
+    print(f"\n所有答題完成！")
+    print(f"總共完成 {success_count}/{attempts} 次答題")
+    print(f"成功率: {(success_count/attempts)*100:.1f}%")
     print("\n按下 Enter 鍵關閉瀏覽器...")
     input()
     driver.quit()
